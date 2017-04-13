@@ -2837,25 +2837,25 @@ comm_exit:
 beep_f1:	; Entry point 1, load beeper frequency 1 settings		
 	jb 	Flags3.CZ_TONES, beep_cz1		
 	mov	Temp3, #20	; Off wait loop length		
-	mov	Temp4, #200	; Number of beep pulses		
+	mov	Temp4, #50	; Number of beep pulses		
 	jmp	beep
 			
 beep_f2:	; Entry point 2, load beeper frequency 2 settings		
 	jb 	Flags3.CZ_TONES, beep_cz2		
 	mov	Temp3, #16		
-	mov	Temp4, #140		
+	mov	Temp4, #35		
 	jmp	beep	
 		
 beep_f3:	; Entry point 3, load beeper frequency 3 settings		
 	jb 	Flags3.CZ_TONES, beep_cz3		
 	mov	Temp3, #13		
-	mov	Temp4, #180		
+	mov	Temp4, #45		
 	jmp	beep
 			
 beep_f4:	; Entry point 4, load beeper frequency 4 settings		
 	jb 	Flags3.CZ_TONES, beep_cz4		
 	mov	Temp3, #11		
-	mov	Temp4, #200		
+	mov	Temp4, #50		
 			
 beep:		; Beep loop start		
 	jnb	Flags3.MUTE, beep_start
@@ -3753,7 +3753,7 @@ Protocol_ID:
 IDbeep_loop:
 	push ACC
 	call beep_f1
-	call wait100ms
+	call wait30ms
 	pop ACC
 	djnz	ACC, IDbeep_loop
 ret
@@ -3770,18 +3770,14 @@ jmp Armed_Beep
 
 ID_Dshot300:
 call beep_f3
-call beep_f3
 jmp Armed_Beep
 
 ID_Dshot600:
 call beep_f2
-call beep_f2
-call wait100ms
-call beep_f3
+call wait30ms
 call beep_f3
 Armed_Beep:
-call wait100ms
-call beep_f4
+call wait30ms
 call beep_f4
 ret
 
@@ -3847,10 +3843,10 @@ pgm_start:
 	mov	Initial_Arm, #1
 	; Initializing beep
 	clr	IE_EA			; Disable interrupts explicitly
-	call wait200ms	
+	call wait30ms	
 	call led_control
-	call wait200ms
-	call wait200ms
+	call wait30ms
+	call wait30ms
 	
 ; ESC startup tone		
 ;-------------------------------------------------------		
@@ -4095,7 +4091,7 @@ ENDIF
 	mov	Stall_Cnt, #0
 	; Initialize RC pulse
 	clr	Flags2.RCP_UPDATED		 	; Clear updated flag
-	call wait200ms
+	call wait30ms
 	; Clear all shot flags
 	clr	Flags2.RCP_ONESHOT125			; Clear OneShot125 flag
 	clr	Flags2.RCP_ONESHOT42			; Clear OneShot42 flag
@@ -4103,7 +4099,7 @@ ENDIF
 	clr	Flags2.RCP_DSHOT				; Clear DShot flag
 	; Test whether signal is regular pwm
 	mov	Rcp_Outside_Range_Cnt, #0		; Reset out of range counter
-	call wait100ms						; Wait for new RC pulse
+	call wait30ms						; Wait for new RC pulse
 	clr	C
 	mov	A, Rcp_Outside_Range_Cnt			; Check how many pulses were outside normal range ("900-2235us")
 	subb	A, #10						
@@ -4113,7 +4109,7 @@ ENDIF
 	; Test whether signal is OneShot125
 	setb	Flags2.RCP_ONESHOT125			; Set OneShot125 flag
 	mov	Rcp_Outside_Range_Cnt, #0		; Reset out of range counter
-	call wait100ms						; Wait for new RC pulse
+	call wait30ms						; Wait for new RC pulse
 	clr	C
 	mov	A, Rcp_Outside_Range_Cnt			; Check how many pulses were outside normal range ("900-2235us")
 	subb	A, #10
@@ -4124,7 +4120,7 @@ ENDIF
 	clr	Flags2.RCP_ONESHOT125
 	setb	Flags2.RCP_ONESHOT42			; Set OneShot42 flag
 	mov	Rcp_Outside_Range_Cnt, #0		; Reset out of range counter
-	call wait100ms						; Wait for new RC pulse
+	call wait30ms						; Wait for new RC pulse
 	clr	C
 	mov	A, Rcp_Outside_Range_Cnt			; Check how many pulses were outside normal range ("900-2235us")
 	subb	A, #10
@@ -4154,7 +4150,7 @@ ENDIF
 	clr	Flags2.RCP_ONESHOT42
 	setb	Flags2.RCP_DSHOT
 	mov	Rcp_Outside_Range_Cnt, #10		; set out of range counter
-	call wait100ms						; Wait for new RC pulse
+	call wait30ms						; Wait for new RC pulse
 	mov	DShot_Pwm_Thr, #16				; Load DShot regular pwm threshold
 	clr	C
 	mov	A, Rcp_Outside_Range_Cnt			; Check if pulses were accepted
@@ -4172,7 +4168,7 @@ ENDIF
 	mov	DShot_Frame_Length_Thr, #40		; Load DShot frame length criteria
 	; Test whether signal is DShot300
 	mov	Rcp_Outside_Range_Cnt, #10		; set out of range counter
-	call wait100ms						; Wait for new RC pulse
+	call wait30ms						; Wait for new RC pulse
 	mov	DShot_Pwm_Thr, #32				; Load DShot regular pwm threshold
 	clr	C
 	mov	A, Rcp_Outside_Range_Cnt			; Check if pulses were accepted
@@ -4190,7 +4186,7 @@ ENDIF
 	mov	DShot_Frame_Length_Thr, #23		; Load DShot frame length criteria
 	; Test whether signal is DShot600
 	mov	Rcp_Outside_Range_Cnt, #10		; set out of range counter
-	call wait100ms						; Wait for new RC pulse
+	call wait30ms						; Wait for new RC pulse
 	mov	DShot_Pwm_Thr, #23				; Load DShot regular pwm threshold
 	clr	C
 	mov	A, Rcp_Outside_Range_Cnt			; Check if pulses were accepted
@@ -4210,7 +4206,7 @@ ENDIF
 	clr	Flags2.RCP_DSHOT
 	setb	Flags2.RCP_MULTISHOT			; Set Multishot flag
 	mov	Rcp_Outside_Range_Cnt, #0		; Reset out of range counter
-	call wait100ms						; Wait for new RC pulse
+	call wait30ms						; Wait for new RC pulse
 	clr	C
 	mov	A, Rcp_Outside_Range_Cnt			; Check how many pulses were outside normal range ("900-2235us")
 	subb	A, #10
@@ -4231,7 +4227,7 @@ validate_rcp_start:
 ;	call beep_f1
 ;	call beep_f1
 	setb	IE_EA						; Enable all interrupts
-	call wait200ms	
+	call wait30ms	
 
 	; Arming sequence start
 arming_start:
@@ -4334,12 +4330,12 @@ program_by_tx_entry_limit:
 	mov	@Temp1, A
 
 program_by_tx_entry_store:
-	call wait200ms				
+	call wait100ms				
 	call erase_and_store_all_in_eeprom	
 	call	success_beep_inverted
 
 program_by_tx_entry_wait:
-	call wait100ms
+	call wait30ms
 	call	find_throttle_gains		; Set throttle gains
 	ljmp	init_no_signal			; Go back
 
@@ -4359,7 +4355,7 @@ arm_end_beep:
 	; Beep arm sequence end signal
 	clr 	IE_EA				; Disable all interrupts
 	Clear_LED_1
-	call wait100ms	
+	call wait30ms	
 	call Arm_beep
 ;	call beep_f4				; Signal that rcpulse is ready
 ;	call beep_f4
@@ -4767,4 +4763,3 @@ ljmp	pgm_start
 
 
 END
-

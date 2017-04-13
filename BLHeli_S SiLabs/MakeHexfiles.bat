@@ -20,7 +20,7 @@ SET KeilPath=C:\SiliconLabs\SimplicityStudio\v3\developer\toolchains\keil_8051\9
 @ECHO Path for Keil toolchain: %KeilPath% >> MakeHex_Result.txt
 @ECHO Start compile ..... >> MakeHex_Result.txt
 
-REM GOTO :apple
+GOTO :apple
 SET ESCNO=1
 SET ESC=A_L_
 SET MCU_48MHZ=0
@@ -104,7 +104,7 @@ SET MCU_48MHZ=1
 call:compile
 SET /A ESCNO+=1
 
-REM goto :end
+goto :end
 SET ESC=K_L_
 SET MCU_48MHZ=0
 call:compile
