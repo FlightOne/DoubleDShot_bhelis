@@ -66,6 +66,7 @@ $NOMOD51
 ; - Rev16.6 Fixed signal detection issue of multishot at 32kHz
 ;           Improved bidirectional mode for high input signal rates
 ; -Rev16.68 Make BLHeli great again!
+; -Rev16.75 Lock Beep Strength
 ;
 ;
 ;**** **** **** **** ****
@@ -451,7 +452,7 @@ Temp_Storage:				DS	48		; Temporary storage
 ;**** **** **** **** ****
 CSEG AT 1A00h            ; "Eeprom" segment
 EEPROM_FW_MAIN_REVISION		EQU	16		; Main revision of the firmware
-EEPROM_FW_SUB_REVISION		EQU	68		; Sub revision of the firmware
+EEPROM_FW_SUB_REVISION		EQU	75		; Sub revision of the firmware
 EEPROM_LAYOUT_REVISION		EQU	33		; Revision of the EEPROM layout
 
 Eep_FW_Main_Revision:		DB	EEPROM_FW_MAIN_REVISION			; EEPROM firmware main revision number
@@ -500,7 +501,7 @@ Eep_Pgm_LED_Control:		DB	DEFAULT_PGM_LED_CONTROL			; EEPROM copy of programmed L
 Eep_Dummy:				DB	0FFh							; EEPROM address for safety reason
 
 CSEG AT 1A60h
-Eep_Name:					DB	"16.68_Tones     "				; Name tag (16 Bytes)
+Eep_Name:					DB	"16.75_RF1FTW    "				; Name tag (16 Bytes)
 
 ;**** **** **** **** ****
 Interrupt_Table_Definition		; SiLabs interrupts
@@ -2880,7 +2881,7 @@ beep_apwmfet_on:
 	jnb	ACC.0, beep_cpwmfet_on		
 	CpwmFET_on		; CpwmFET on		
 beep_cpwmfet_on:		
-	mov	A, Beep_Strength		
+	mov	A, #65		; beep strength locked to 65
 	djnz	ACC, $				
 	; Turn off pwmfet		
 	mov	A, Temp2		
@@ -2999,7 +3000,7 @@ music_inner_loop:
 	jnb Flags3.FET_SWAP, tone_BC				
 	BcomFET_on		; BcomFET on				
 	ApwmFET_on		; ApwmFET on				
-	mov	A, Beep_Strength				
+	mov	A, #65		; beep strength locked to 65
 	djnz	ACC, $						
 	ApwmFET_off		; ApwmFET off				
 	BcomFET_off		; BcomFET off				
@@ -3007,7 +3008,7 @@ music_inner_loop:
 tone_BC:					
 	BcomFET_on		; BcomFET on				
 	CpwmFET_on		; CpwmFET on				
-	mov	A, Beep_Strength				
+	mov	A, #65		; beep strength locked to 65
 	djnz	ACC, $						
 	CpwmFET_off		; CpwmFET off				
 	BcomFET_off		; BcomFET off				
@@ -3711,7 +3712,7 @@ music:
 			
 	BcomFET_on										; BcomFET on				
 	ApwmFET_on										; ApwmFET on				
-	mov	A, Beep_Strength				
+	mov	A, #65		; beep strength locked to 65
 	djnz	ACC, $						
 	ApwmFET_off										; ApwmFET off				
 	BcomFET_off										; BcomFET off				
@@ -3860,7 +3861,7 @@ pgm_start:
 ; 4) Imperial March Startup Tone		
 ; 5) Harrison Gale 		
 	
-	mov	A, Beep_Strength						
+	mov	A, #65		; beep strength locked to 65
 	dec A		
 	jnz	Tone_Selection
 	setb Flags3.MUTE		
